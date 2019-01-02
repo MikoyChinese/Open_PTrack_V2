@@ -4,27 +4,28 @@ enable_pose: true
 enable_object: true
 # Camera network parameters
 network:
-  - pc: "PC1"
+  - pc: "Multi"
     sensors:
       - type: kinect2
         id: "kinect01"
         people_detector: hog
-  - pc: "PC2"
+        serial: 005866364339
     sensors:
       - type: kinect2
         id: "kinect02"
         people_detector: hog
-  - pc: "PC3"
+        serial: 005962364339
+  - pc: "PC2"
     sensors:
       - type: kinect2
         id: "kinect03"
-        people_detector: hog
+        people_detector: yolo
 
 #  - pc: "opt2-chela-master"
 #    sensors:
 #      - type: kinect2
 #        id: "kinect06"
-#        people_detector: hog
+#        people_detector: munaro
 
 # Checkerboard parameters
 checkerboard:
