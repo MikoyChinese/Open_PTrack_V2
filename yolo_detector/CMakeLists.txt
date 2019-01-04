@@ -40,6 +40,7 @@ include_directories(
 	${DARKNET_SRC_DIR}/include
 	${DARKNET_SRC_DIR}/src
 	/usr/local/cuda/include #for CuDNN, CuBLAS, CuRAND
+	/usr/include/eigen3 # For Eigen3 include.
 )
 
 link_directories(${OpenCV_LIBRARY_DIRS})
