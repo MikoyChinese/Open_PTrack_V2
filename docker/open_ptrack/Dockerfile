@@ -4,7 +4,7 @@ LABEL maintainer "Samir Tabriz"
 ARG branch=kinect
 
 RUN /bin/bash -c "source /opt/ros/kinetic/setup.bash \
-    && git clone https://github.com/openptrack/open_ptrack_v2 ~/workspace/ros/src/open_ptrack \
+    && git clone https://github.com/mikoychinese/open_ptrack_v2 ~/workspace/ros/src/open_ptrack \
     && cd ~/workspace/ros/src/open_ptrack \
     && git checkout $branch \
     && cd ../..  \
