@@ -1,7 +1,7 @@
 #########################
 ## Tracking parameters ##
 #########################
-# Mininum confidence for track initialization:
+# Mininum confidence for track initialization:(The lower the value the more sensitive the detection will be.)
 min_confidence_initialization: 4.0
 # Tracking maximum frame rate per sensor:
 rate: 30
