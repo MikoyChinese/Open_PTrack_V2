@@ -123,9 +123,10 @@ void extractObject(int imW, int imH, int num, float thresh, box *boxes, float **
         float prob = probs[i][classI];
         if(prob > thresh)
         {	
-	       // jb - return any classes, so commenting this out 
-	       //  if (strcmp(names[classI], "person") == 0)
-			// {
+	       // jb - return any classes, so commenting this out
+	       // Just for detect person. 
+	       if (strcmp(names[classI], "person") == 0)
+			  {
 				newNum++;
 				
 				if(newNum == result->num)
@@ -150,7 +151,7 @@ void extractObject(int imW, int imH, int num, float thresh, box *boxes, float **
 				result->boxes[j].w = right-left;
 				result->boxes[j].h = bot-top;
 				result->boxes[j].classID = classI; // jb added
-			// jb }
+			  }
         }
     }
     
