@@ -13,6 +13,7 @@ typedef struct adjBox
 	int w;
 	int h;
 	int classID;  // jb  
+        float prob;
 
 } adjBox;
 

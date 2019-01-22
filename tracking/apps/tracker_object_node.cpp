@@ -291,7 +291,7 @@ detection_cb(const opt_msgs::DetectionArray::ConstPtr& msg)
     }
 
     // Convert HOG+SVM confidences to HAAR+ADABOOST-like people detection confidences:
-    if (not std::strcmp(msg->confidence_type.c_str(), "hog+svm"))
+    if (std::strcmp(msg->confidence_type.c_str(), "hog+svm"))
     {
       for(unsigned int i = 0; i < detections_vector.size(); i++)
       {

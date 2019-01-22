@@ -151,6 +151,7 @@ void extractObject(int imW, int imH, int num, float thresh, box *boxes, float **
 				result->boxes[j].w = right-left;
 				result->boxes[j].h = bot-top;
 				result->boxes[j].classID = classI; // jb added
+                                result->boxes[j].prob = prob
 			  }
         }
     }

@@ -276,7 +276,7 @@ void callback(const Image::ConstPtr& rgb_image,
 				detection_msg.box_2D.width = 0;
 				detection_msg.box_2D.height = 0;
 				detection_msg.height = 0;
-				detection_msg.confidence = 10;
+				detection_msg.confidence = boxes->boxes[i].prob;
 				detection_msg.distance = medianDepth;
 			
 				detection_msg.centroid.x = mx;
