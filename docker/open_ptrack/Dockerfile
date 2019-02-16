@@ -1,7 +1,7 @@
-FROM openptrack/open_ptrack-dep
+FROM registry.cn-hangzhou.aliyuncs.com/mikoychinese/open_ptrack-dep:v1.0
 LABEL maintainer "Mikoy Chinese"
 
-ARG branch=dev
+ARG branch=realsense
 
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C8B3A55A6F3EFCDE \
     && add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo xenial main" -u \
@@ -14,7 +14,7 @@ RUN /bin/bash -c "source /opt/ros/kinetic/setup.bash \
     && apt-get install ros-kinetic-rgbd-launch"
 
 RUN /bin/bash -c "source /opt/ros/kinetic/setup.bash \
-    && git clone https://github.com/openptrack/open_ptrack_v2 ~/workspace/ros/src/open_ptrack \
+    && git clone https://github.com/MikoyChinese/open_ptrack_v2 ~/workspace/ros/src/open_ptrack \
     && cd ~/workspace/ros/src/open_ptrack \
     && git checkout $branch \
     && cd ../..  \
