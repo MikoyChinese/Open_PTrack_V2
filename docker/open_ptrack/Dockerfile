@@ -23,7 +23,7 @@ RUN /bin/bash -c "source /opt/ros/kinetic/setup.bash \
 
 RUN /bin/bash -c "source /root/workspace/ros/devel/setup.bash \
     && roscd yolo_detector/darknet_opt \
-    && wget -O coco.weights https://pjreddie.com/media/files/yolo.weights"
+    && wget -O coco.weights https://dev.tencent.com/api/share/download/6ceed3c3-b51f-41bc-9fa4-1e868c1a9a7a"
 
 
 RUN ln -s /root/workspace/ros/src/open_ptrack /root/open_ptrack
