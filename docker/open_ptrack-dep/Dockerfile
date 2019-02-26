@@ -130,6 +130,31 @@ RUN  cd ~/workspace/ros/src     \
     && git checkout 1607       
 
 
+RUN  cd     \ 
+    && cd workspace     \ 
+    && git clone https://github.com/OpenPTrack/libfreenect2.git     \ 
+    && cd libfreenect2     \ 
+    && git checkout 1606     \ 
+    && cd depends/     \ 
+    && apt-get install -y git cmake cmake-curses-gui libxmu-dev libxi-dev libgl1-mesa-dev xorg-dev libglu1-mesa-dev libtool automake libudev-dev libgtk2.0-dev pkg-config libjpeg-turbo8-dev libturbojpeg libglewmx-dev     \ 
+    && ln -f -s /usr/lib/x86_64-linux-gnu/libturbojpeg.so.0.1.0 /usr/lib/x86_64-linux-gnu/libturbojpeg.so     \ 
+    && cd .. \
+    && mkdir build \ 
+    && cd build     \ 
+    && /bin/bash -c "source /opt/ros/kinetic/setup.bash    \ 
+    && export NVCUDASAMPLES_ROOT='/root/workspace/NVIDIA_CUDA-8.0_Samples' \
+    && cmake .. -DENABLE_CXX11=ON -DCUDA_PROPAGATE_HOST_FLAGS=off   \ 
+    && make     \
+    && make install"     \
+    && echo '# ATTR{product}=="Kinect2" SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02c4", MODE="0666" SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02d8", MODE="0666" SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02d9", MODE="0666"' > ~/90-kinect2.rules     \ 
+    && cp ~/90-kinect2.rules /etc/udev/rules.d/
+
+RUN  cd ~/workspace/ros/src     \ 
+    && git clone https://github.com/OpenPTrack/iai_kinect2.git     \ 
+    && cd iai_kinect2     \ 
+    && git checkout 1607       
+
+
 RUN  /bin/bash -c "git clone https://github.com/torch/distro.git ~/torch --recursive \ 
     && cd ~/torch \ 
     && bash install-deps \ 
