@@ -1,7 +1,7 @@
 FROM registry.cn-hangzhou.aliyuncs.com/mikoychinese/open_ptrack-dep:v1.0
 LABEL maintainer "Mikoy Chinese"
 
-ARG branch=dev
+ARG branch=realsense
 
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C8B3A55A6F3EFCDE \
     && add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo xenial main" -u \
