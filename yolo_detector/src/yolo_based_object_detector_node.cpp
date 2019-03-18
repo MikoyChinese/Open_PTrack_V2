@@ -227,6 +227,12 @@ void callback(const Image::ConstPtr& rgb_image,
 			int medianX = boxes->boxes[i].x + (boxes->boxes[i].w / 2);
 			int medianY = boxes->boxes[i].y + (boxes->boxes[i].h / 2);
 			
+			// Fixed if the detect box rectangle is out of im.size();
+			if ( medianX < im.w*0.02) continue;
+			if ( medianY < im.h*0.02) continue;
+			if ( medianX > im.w*0.98) continue;
+			if ( medianY > im.h*0.98) continue;
+			
 			int newX = medianX - (median_factor * (medianX - boxes->boxes[i].x));
 			int newY = medianY - (median_factor * (medianY - boxes->boxes[i].y));
 			int newWidth = 2 * (median_factor * (medianX - boxes->boxes[i].x));
@@ -235,7 +241,7 @@ void callback(const Image::ConstPtr& rgb_image,
 			
 			cv::Rect rect(newX, newY, newWidth, newHeight);
 			float medianDepth = median(_depth_image(rect)) / mm_factor;
-			if (medianDepth < 0.2 || medianDepth > 6.25) {
+			if (medianDepth < 0.2 || medianDepth > 8.25) {
 			// Fixed if medianDepth = 0, the point coordinate change to the cammera itself (0,0,0).
 				std::cout << "mediandepth " << medianDepth << " rejecting" << std::endl;
 				continue;
