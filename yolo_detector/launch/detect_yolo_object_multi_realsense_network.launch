@@ -6,7 +6,7 @@
   <arg name="training_set" default="$(optenv OPT_OBJECT_TRAINING coco)" />
   
   <!-- Launch object detection node -->
-  <node pkg="yolo_detector" type="open_ptrack_yolo_object_detector_node"
+  <node pkg="yolo_detector" type="open_ptrack_yolo_object_detector_node_multi"
         name="$(arg sensor_name)_yolo_object_detector_node" output="screen" respawn="false">
         
     <param name="sensor_name_1"             value="$(arg sensor_name_1)" />
