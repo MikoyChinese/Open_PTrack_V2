@@ -5,7 +5,7 @@
   <arg name="sensor_id_1"               default="123456789" />
   <arg name="sensor_id_2"               default="123456789" />
   <arg name="sensor_name_1"             default="rs01" />
-  <arg name="sensor_name_2"             default="rs02" />1
+  <arg name="sensor_name_2"             default="rs02" />
   
   <!-- Launch the sensor -->
   
@@ -32,8 +32,8 @@
   <!-- Object Detection node -->
   <group if="$(arg enable_object)">
     <include file="$(find yolo_detector)/launch/detect_yolo_object_multi_realsense_network.launch">
-      <arg name="$(arg sensor_name_1)"   value="$(arg sensor_name_1)" />
-      <arg name="$(arg sensor_name_1)"   value="$(arg sensor_name_1)" />
+      <arg name="sensor_name_1"   value="$(arg sensor_name_1)" />
+      <arg name="sensor_name_2"   value="$(arg sensor_name_2)" />
     </include>
   </group>
 </launch>
