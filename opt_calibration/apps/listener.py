@@ -410,6 +410,8 @@ class Listener :
       if request.serial != '':
         file.write('  <arg name="sensor_id"   default="' + request.serial + '" />\n')
       file.write('  <arg name="sensor_name" default="' + request.id + '" />\n\n')
+      file.write('  <arg name="width" default="424" />\n')
+      file.write('  <arg name="height" default="240" />\n\n')
       file.write('  <!-- true  = Munaro Based OPT Detection -->\n')
       file.write('  <!-- false = YOLO Based Detection (Must Have YOLO installed to use)-->\n')
       if request.people_detector_type == OPTSensorRequest.PEOPLE_DETECTOR_YOLO_BASED:
@@ -419,7 +421,13 @@ class Listener :
       file.write('  <!-- Launch the sensor -->\n')
       file.write('   <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">\n')
       file.write('      <arg name="camera"         value="$(arg sensor_name)" />\n')
-      file.write('      <arg name="serial_no"         value="$(arg sensor_id)" />\n')
+      file.write('      <arg name="serial_no"         value="$(arg sensor_id)" />\n\n')
+      file.write('      <arg name="depth_width"         value="$(arg width)" />\n')
+      file.write('      <arg name="depth_height"         value="$(arg height)" />\n')
+      file.write('      <arg name="infra_width"         value="$(arg width)" />\n')
+      file.write('      <arg name="infra_height"         value="$(arg height)" />\n')
+      file.write('      <arg name="color_width"         value="$(arg width)" />\n')
+      file.write('      <arg name="color_height"         value="$(arg height)" />\n')
       file.write('   </include>\n')
       file.write('  <include file="$(find detection)/launch/realsense_frames.launch">\n')
       file.write('      <arg name="camera"         value="$(arg sensor_name)" />\n')
@@ -460,8 +468,6 @@ class Listener :
       file.write('  <!-- Object Detection node -->\n')
       file.write('  <group if="$(arg enable_object)">\n')
       file.write('    <include file="$(find yolo_detector)/launch/detect_yolo_object_realsense_network.launch">\n')
-      if request.serial != '':
-        file.write('      <arg name="serial_no"               value="$(arg sensor_id)" />\n')
       file.write('      <arg name="sensor_name"             value="$(arg sensor_name)" />\n')
       file.write('    </include>\n\n')
       file.write('  </group>\n\n') 

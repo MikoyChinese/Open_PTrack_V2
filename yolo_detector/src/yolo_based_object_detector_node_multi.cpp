@@ -64,7 +64,8 @@ float thresh;
 float hier_thresh;
 float median_factor;
 
-image_transport::Publisher pub;
+image_transport::Publisher pub_1;
+image_transport::Publisher pub_2;
 ros::Publisher detection_pub;
 
 open_ptrack::opt_utils::Conversions converter;
@@ -79,6 +80,8 @@ double _constant_x;
 double _constant_y; 
 
 std::string encoding;
+std::string sensor_name_1;
+std::string sensor_name_2;
 float mm_factor;
 
 void camera_info_cb (const CameraInfo::ConstPtr & msg)
@@ -118,7 +121,7 @@ image ipl_to_image(IplImage* src)
     for(k= 0; k < c; ++k){
         for(i = 0; i < h; ++i){
             for(j = 0; j < w; ++j){
-                out.data[count++] = data[i*step + j*c + k]/255.;
+                out.data[count++] = 1. - data[i*step + j*c + k]/255.;
             }
         }
     }
@@ -170,7 +173,7 @@ void callback(const Image::ConstPtr& rgb_image,
 	//std::cout<<"Sync Started"<<std::endl;
     cv_bridge::CvImageConstPtr cv_ptr_rgb = cv_bridge::toCvShare(rgb_image,
                                                                    enc::BGR8);
-    if((pub.getNumSubscribers() > 0 || detection_pub.getNumSubscribers()) && camera_info_available_flag)
+    if((pub_1.getNumSubscribers() > 0 || pub_2.getNumSubscribers() > 0 || detection_pub.getNumSubscribers()) && camera_info_available_flag)
     {
 	//	std::cout<<"Run Yolo"<<std::endl;
 		ros::Time begin = ros::Time::now();
@@ -241,7 +244,7 @@ void callback(const Image::ConstPtr& rgb_image,
 			
 			cv::Rect rect(newX, newY, newWidth, newHeight);
 			float medianDepth = median(_depth_image(rect)) / mm_factor;
-			if (medianDepth < 0.2 || medianDepth > 8.25) {
+			if (medianDepth < 0.05 || medianDepth > 8.75) {
 			// Fixed if medianDepth = 0, the point coordinate change to the cammera itself (0,0,0).
 				std::cout << "mediandepth " << medianDepth << " rejecting" << std::endl;
 				continue;
@@ -254,7 +257,7 @@ void callback(const Image::ConstPtr& rgb_image,
 			ss << object_name << ":" << medianDepth; //  << " " << mm_factor;
 			
 			
-			if(pub.getNumSubscribers() > 0)
+			if(pub_1.getNumSubscribers() > 0 || pub_2.getNumSubscribers() > 0)
 			{
 				cv::rectangle(image, cv::Point( newX, newY ), cv::Point( newX+ newWidth, newY+ newHeight), cv::Scalar( 0, 255, 0 ), 4);
 				cv::rectangle(image, cv::Point( boxes->boxes[i].x, boxes->boxes[i].y ), 
@@ -312,11 +315,17 @@ void callback(const Image::ConstPtr& rgb_image,
 			}
 		}
 		
-		if(pub.getNumSubscribers() > 0)
+		if(pub_1.getNumSubscribers() > 0 || pub_2.getNumSubscribers() > 0)
 		{
 			
 			sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
-			pub.publish(msg);
+			std::string frame_id = rgb_image->header.frame_id;
+			int pos = frame_id.find(sensor_name_1);
+			if (pos != std::string::npos){
+			  pub_1.publish(msg);
+			}else{
+			  pub_2.publish(msg);
+			}
     	}
 		
 		//std::cout << "publishing " << detection_array_msg << std::endl; 
@@ -329,15 +338,23 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "yolo_based_object_detector");
     ros::NodeHandle nh("~");
-	
-	std::string depth_image_topic;
-	nh.param("depth_image_topic", depth_image_topic, std::string("/camera/depth_registered/points"));
-	std::string rgb_image_topic;
-	nh.param("rgb_image_topic", rgb_image_topic, std::string("/camera/depth_registered/points"));
+    
+	nh.param("sensor_name_1", sensor_name_1, std::string("cam1"));
+	nh.param("sensor_name_2", sensor_name_2, std::string("cam1"));
+	std::string depth_image_topic_1;
+	std::string depth_image_topic_2;
+	nh.param("depth_image_topic_1", depth_image_topic_1, std::string("/camera_1/depth_registered/points"));
+	nh.param("depth_image_topic_2", depth_image_topic_2, std::string("/camera_2/depth_registered/points"));
+	std::string rgb_image_topic_1;
+	std::string rgb_image_topic_2;
+	nh.param("rgb_image_topic_1", rgb_image_topic_1, std::string("/camera_1/depth_registered/points"));
+	nh.param("rgb_image_topic_2", rgb_image_topic_2, std::string("/camera_2/depth_registered/points"));
 	std::string output_topic;
 	nh.param("output_topic", output_topic, std::string("/objects_detector/detections"));  // jb per https://github.com/OpenPTrack/open_ptrack_v2/blob/master/detection/apps/multiple_objects_detection_node.cpp#L67
-	std::string camera_info_topic;
-	nh.param("camera_info_topic", camera_info_topic, std::string("/camera/rgb/camera_info"));
+	std::string camera_info_topic_1;
+	std::string camera_info_topic_2;
+	nh.param("camera_info_topic_1", camera_info_topic_1, std::string("/camera_1/rgb/camera_info"));
+	nh.param("camera_info_topic_2", camera_info_topic_2, std::string("/camera_2/rgb/camera_info"));
 	
 	std::string encoding_param;
 	nh.param("encoding_type", encoding_param, std::string("16UC1"));
@@ -432,7 +449,8 @@ std::string datacfg;
 	
 	
 	image_transport::ImageTransport it(nh);
-    pub = it.advertise("yolo_object_detector/image", 1);
+    pub_1 = it.advertise("cam1_yolo_object_detector/image", 1);
+    pub_2 = it.advertise("cam2_yolo_object_detector/image", 1);
     detection_pub= nh.advertise<DetectionArray>(output_topic, 3);
     
     dynamic_reconfigure::Server<yolo_detector::open_ptrack_yoloConfig> server;
@@ -441,15 +459,20 @@ std::string datacfg;
     f = boost::bind(&dynamic_callback, _1, _2);
     server.setCallback(f);
 	
-    message_filters::Subscriber<Image> rgb_image_sub(nh, rgb_image_topic, 1);
-    message_filters::Subscriber<Image> depth_image_sub(nh, depth_image_topic, 1);
+    message_filters::Subscriber<Image> rgb_image_sub_1(nh, rgb_image_topic_1, 1);
+    message_filters::Subscriber<Image> rgb_image_sub_2(nh, rgb_image_topic_2, 1);
+    message_filters::Subscriber<Image> depth_image_sub_1(nh, depth_image_topic_1, 1);
+    message_filters::Subscriber<Image> depth_image_sub_2(nh, depth_image_topic_2, 1);
     
-    ros::Subscriber camera_info_sub = nh.subscribe(camera_info_topic, 1, camera_info_cb);
+    ros::Subscriber camera_info_sub_1 = nh.subscribe(camera_info_topic_1, 1, camera_info_cb);
+    ros::Subscriber camera_info_sub_2 = nh.subscribe(camera_info_topic_2, 1, camera_info_cb);
 
     typedef sync_policies::ApproximateTime<Image, Image> Sync1Policy;
     
-    Synchronizer<Sync1Policy> sync(Sync1Policy(10), rgb_image_sub, depth_image_sub);
-    sync.registerCallback(boost::bind(&callback, _1, _2));
+    Synchronizer<Sync1Policy> sync_1(Sync1Policy(10), rgb_image_sub_1, depth_image_sub_1);
+    Synchronizer<Sync1Policy> sync_2(Sync1Policy(10), rgb_image_sub_2, depth_image_sub_2);
+    sync_1.registerCallback(boost::bind(&callback, _1, _2));
+    sync_2.registerCallback(boost::bind(&callback, _1, _2));
 
     ros::spin();
 
