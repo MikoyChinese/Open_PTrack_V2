@@ -321,6 +321,8 @@ void callback(const Image::ConstPtr& rgb_image,
 		
 		//std::cout << "publishing " << detection_array_msg << std::endl; 
 		detection_pub.publish(detection_array_msg);
+		free(boxes->boxes);
+		free(boxes);
     }
 }
 
