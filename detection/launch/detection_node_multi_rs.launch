@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="enable_object"             default="true" />
+  <arg name="sensor_id_1"               default="123456789" />
+  <arg name="sensor_id_2"               default="123456789" />
+  <arg name="sensor_name_1"             default="rs01" />
+  <arg name="sensor_name_2"             default="rs02" />
+  
+  <!-- Launch the sensor -->
+  
+  <!-- The first sensor -->
+  <include file="$(find realsense2_camera)/launch/rs_rgbd.launch" >
+    <arg name="camera"                  value="$(arg sensor_name_1)" />
+    <arg name="serial_no"               value="$(arg sensor_id_1)" />
+  </include>
+  <include file="$(find detection)/launch/realsense_frames.launch">
+    <arg name="camera"                  value="$(arg sensor_name_1)"/>  
+  </include>
+  
+  <!-- The second sensor -->
+    <include file="$(find realsense2_camera)/launch/rs_rgbd.launch" >
+    <arg name="camera"                  value="$(arg sensor_name_2)" />
+    <arg name="serial_no"               value="$(arg sensor_id_2)" />
+  </include>
+  <include file="$(find detection)/launch/realsense_frames.launch">
+    <arg name="camera"                  value="$(arg sensor_name_2)"/>  
+  </include>
+  
+  <!-- Detection node -->
+  
+  <!-- Object Detection node -->
+  <group if="$(arg enable_object)">
+    <include file="$(find yolo_detector)/launch/detect_yolo_object_multi_realsense_network.launch">
+      <arg name="sensor_name_1"   value="$(arg sensor_name_1)" />
+      <arg name="sensor_name_2"   value="$(arg sensor_name_2)" />
+    </include>
+  </group>
+</launch>

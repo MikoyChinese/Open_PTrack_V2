@@ -65,3 +65,7 @@ target_link_libraries(yolo_lib ${CUDA_LIBRARIES} cudnn cublas curand)
 add_executable(open_ptrack_yolo_object_detector_node src/yolo_based_object_detector_node.cpp )
 target_link_libraries(open_ptrack_yolo_object_detector_node yolo_lib yolo_cuda_lib ${catkin_LIBRARIES} ${CUDA_LIBRARIES} ${OpenCV_LIBS} )
 add_dependencies(open_ptrack_yolo_object_detector_node ${PROJECT_NAME}_gencfg)
+
+add_executable(open_ptrack_yolo_object_detector_node_multi src/yolo_based_object_detector_node_multi.cpp )
+target_link_libraries(open_ptrack_yolo_object_detector_node_multi yolo_lib yolo_cuda_lib ${catkin_LIBRARIES} ${CUDA_LIBRARIES} ${OpenCV_LIBS} )
+add_dependencies(open_ptrack_yolo_object_detector_node_multi ${PROJECT_NAME}_gencfg)
