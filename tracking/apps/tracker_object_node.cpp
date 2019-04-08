@@ -615,7 +615,9 @@ main(int argc, char** argv)
   ros::NodeHandle nh("~");
 
   // Subscribers/Publishers:
-  ros::Subscriber input_sub = nh.subscribe("input", 5, detection_cb);
+  int queue_size;
+  nh.param("queue_size", queue_size, 10);
+  ros::Subscriber input_sub = nh.subscribe("input", queue_size, detection_cb);
   marker_pub_tmp = nh.advertise<visualization_msgs::Marker>("/tracker/markers", 1);
   marker_pub = nh.advertise<visualization_msgs::MarkerArray>("/tracker/markers_array", 1);
   pointcloud_pub = nh.advertise<pcl::PointCloud<pcl::PointXYZRGBA> >("/tracker/history", 1);
