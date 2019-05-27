@@ -118,7 +118,7 @@ image ipl_to_image(IplImage* src)
     for(k= 0; k < c; ++k){
         for(i = 0; i < h; ++i){
             for(j = 0; j < w; ++j){
-                out.data[count++] = data[i*step + j*c + k]/255.;
+                out.data[count++] = 1. - data[i*step + j*c + k]/255.;
             }
         }
     }
